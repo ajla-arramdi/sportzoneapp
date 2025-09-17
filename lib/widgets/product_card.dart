@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import '../models/cart.dart';
 
 class ProductCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final String price;
+  final String? imageUrl;
+  final Color? imageColor;
   final Color badgeColor;
   final VoidCallback? onTap;
 
@@ -12,13 +15,22 @@ class ProductCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.price,
+    this.imageUrl,
+    this.imageColor,
     this.badgeColor = Colors.red,
     this.onTap,
   });
 
+  double _parsePrice(String priceLabel) {
+    final numeric = priceLabel.replaceAll(RegExp(r'[^0-9.]'), '');
+    return double.tryParse(numeric) ?? 0.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final cart = CartScope.of(context);
 
     return InkWell(
       onTap: onTap,
@@ -41,14 +53,21 @@ class ProductCard extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.blueGrey[100],
+                  color: imageColor ?? Colors.blueGrey[100],
                   borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  image: imageUrl != null
+                      ? DecorationImage(
+                          image: NetworkImage(imageUrl!),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
                 ),
                 child: Stack(
                   children: [
-                    Center(
-                      child: Icon(Icons.sports_basketball, size: 48, color: Colors.blueGrey[400]),
-                    ),
+                    if (imageUrl == null)
+                      Center(
+                        child: Icon(Icons.sports_basketball, size: 48, color: Colors.blueGrey[400]),
+                      ),
                     Positioned(
                       top: 10,
                       left: 10,
@@ -92,9 +111,25 @@ class ProductCard extends StatelessWidget {
                     children: [
                       Text(
                         price,
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
+                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: cs.primary),
                       ),
-                      Icon(Icons.add_shopping_cart, color: theme.colorScheme.primary),
+                      IconButton(
+                        tooltip: 'Add to cart',
+                        icon: const Icon(Icons.add_shopping_cart),
+                        color: cs.primary,
+                        onPressed: () {
+                          cart.addItem(
+                            id: title, // in real app use product id
+                            title: title,
+                            priceLabel: price,
+                            price: _parsePrice(price),
+                            quantity: 1,
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Added to cart')),
+                          );
+                        },
+                      ),
                     ],
                   )
                 ],

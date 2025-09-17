@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/modern_app_bar.dart';
+import '../models/cart.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final String title;
@@ -18,10 +19,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   final List<String> sizes = ['XS', 'S', 'M', 'L', 'XL'];
 
+  double _parsePrice(String priceLabel) {
+    final numeric = priceLabel.replaceAll(RegExp(r'[^0-9.]'), '');
+    return double.tryParse(numeric) ?? 0.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+    final cart = CartScope.of(context);
 
     return Scaffold(
       appBar: const ModernAppBar(title: 'Product Detail', showBackButton: true),
@@ -142,7 +149,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 SizedBox(
                                   height: 46,
                                   child: FilledButton.icon(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      cart.addItem(
+                                        id: widget.title,
+                                        title: widget.title,
+                                        priceLabel: widget.price,
+                                        price: _parsePrice(widget.price),
+                                        size: _selectedSize,
+                                        quantity: _quantity,
+                                      );
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Added to cart')),
+                                      );
+                                    },
                                     icon: const Icon(Icons.shopping_bag_outlined),
                                     label: const Text('Add to cart'),
                                   ),

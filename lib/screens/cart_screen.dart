@@ -2,174 +2,200 @@
 
 
 import 'package:flutter/material.dart';
+import '../models/cart.dart';
+import '../widgets/modern_app_bar.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cart = CartScope.of(context);
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shopping Cart'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8.0), // 8px spacing
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 16), // 2 * 8px
-                  padding: const EdgeInsets.all(16), // 2 * 8px
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(16), // 2 * 8px
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8, // 8px spacing
-                        offset: const Offset(0, 2), // 0.25 * 8px
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 80, // 10 * 8px
-                        height: 80, // 10 * 8px
+      appBar: const ModernAppBar(title: 'Your Cart', showBackButton: false),
+      body: cart.items.isEmpty
+          ? _EmptyState()
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(12),
+                    itemCount: cart.items.length,
+                    itemBuilder: (context, index) {
+                      final item = cart.items[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.primaries[index % Colors.primaries.length],
-                          borderRadius: BorderRadius.circular(12), // 1.5 * 8px
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Item ${index + 1}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16), // 2 * 8px
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Product ${index + 1}',
-                              style: const TextStyle(
-                                fontSize: 16, // 2 * 8px
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4), // 0.5 * 8px
-                            Text(
-                              '\${(index + 1) * 20}.99',
-                              style: const TextStyle(
-                                fontSize: 16, // 2 * 8px
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
-                              ),
-                            ),
-                            const SizedBox(height: 8), // 8px spacing
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(4), // 0.5 * 8px
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4), // 0.5 * 8px
-                                  ),
-                                  child: const Icon(
-                                    Icons.remove,
-                                    size: 16, // 2 * 8px
-                                  ),
-                                ),
-                                const SizedBox(width: 8), // 8px spacing
-                                const Text('1'),
-                                const SizedBox(width: 8), // 8px spacing
-                                Container(
-                                  padding: const EdgeInsets.all(4), // 0.5 * 8px
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4), // 0.5 * 8px
-                                  ),
-                                  child: const Icon(
-                                    Icons.add,
-                                    size: 16, // 2 * 8px
-                                  ),
-                                ),
-                              ],
+                          color: theme.cardColor,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16), // 2 * 8px
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8, // 8px spacing
-                  offset: const Offset(0, -2), // -0.25 * 8px
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('Total:'),
-                    Text(
-                      '\$59.97',
-                      style: TextStyle(
-                        fontSize: 18, // 2.25 * 8px
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16), // 2 * 8px
-                SizedBox(
-                  width: double.infinity,
-                  height: 50, // ~6.25 * 8px
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle checkout
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 72,
+                              height: 72,
+                              decoration: BoxDecoration(
+                                color: cs.primary.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(Icons.sports_basketball, color: cs.primary),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(item.title, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                                      ),
+                                      IconButton(
+                                        tooltip: 'Remove',
+                                        onPressed: () => cart.removeItem(id: item.id, size: item.size),
+                                        icon: const Icon(Icons.close),
+                                      ),
+                                    ],
+                                  ),
+                                  if (item.size != null)
+                                    Text('Size: ${item.size}', style: theme.textTheme.bodySmall),
+                                  const SizedBox(height: 6),
+                                  Text(item.priceLabel, style: theme.textTheme.titleMedium?.copyWith(color: cs.primary, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      _qtyBtn(context, icon: Icons.remove, onTap: () => cart.updateQuantity(id: item.id, size: item.size, delta: -1)),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                                        child: Text('${item.quantity}', style: theme.textTheme.titleMedium),
+                                      ),
+                                      _qtyBtn(context, icon: Icons.add, onTap: () => cart.updateQuantity(id: item.id, size: item.size, delta: 1)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
                     },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12), // 1.5 * 8px
-                      ),
-                    ),
-                    child: const Text(
-                      'Checkout',
-                      style: TextStyle(
-                        fontSize: 16, // 2 * 8px
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                   ),
                 ),
+                _SummaryBar(total: cart.totalAmount, onCheckout: () {}),
               ],
+            ),
+    );
+  }
+
+  Widget _qtyBtn(BuildContext context, {required IconData icon, required VoidCallback onTap}) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      child: Ink(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: cs.primary.withOpacity(0.2)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: Icon(icon, size: 18, color: cs.primary),
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.shopping_bag_outlined, size: 72, color: cs.primary),
+            const SizedBox(height: 12),
+            Text('Your cart is empty', style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+            const SizedBox(height: 6),
+            Text('Browse products and add your favorite items.', style: theme.textTheme.bodyMedium, textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Start shopping'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryBar extends StatelessWidget {
+  final double total;
+  final VoidCallback onCheckout;
+
+  const _SummaryBar({required this.total, required this.onCheckout});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Total', style: theme.textTheme.titleMedium),
+              Text(
+                _formatCurrency(total),
+                style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: onCheckout,
+              icon: const Icon(Icons.lock_outline),
+              label: const Text('Checkout Securely'),
             ),
           ),
         ],
       ),
     );
+  }
+
+  String _formatCurrency(double amount) {
+    return '\$' + amount.toStringAsFixed(2);
   }
 }
