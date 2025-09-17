@@ -1,23 +1,21 @@
-
 import 'package:flutter/material.dart';
-import '../models/user.dart';
 import '../widgets/modern_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<RegistrationScreen> createState() => _RegistrationScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _RegistrationScreenState extends State<RegistrationScreen> with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscureText = true;
-  
+  bool _rememberMe = true;
+
   late AnimationController _animationController;
   late Animation<double> _animation;
 
@@ -28,16 +26,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
       duration: const Duration(milliseconds: 450),
       vsync: this,
     );
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    );
+    _animation = CurvedAnimation(parent: _animationController, curve: Curves.easeInOut);
     _animationController.forward();
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _animationController.dispose();
@@ -50,21 +44,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
     });
   }
 
-  void _submitForm() {
+  void _submit() {
     if (_formKey.currentState!.validate()) {
-      User newUser = User(
-        name: _nameController.text,
-        email: _emailController.text,
-      );
-
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Registration successful for ${newUser.name}'),
-          backgroundColor: Colors.green,
-        ),
+        const SnackBar(content: Text('Logged in')),
       );
-
-      Navigator.pop(context);
+      Navigator.pushReplacementNamed(context, '/');
     }
   }
 
@@ -74,7 +59,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
     final cs = theme.colorScheme;
 
     return Scaffold(
-      appBar: const ModernAppBar(title: 'Create account', showBackButton: true),
+      appBar: const ModernAppBar(title: 'Log in', showBackButton: false),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final double maxWidth = constraints.maxWidth >= 900 ? 520 : constraints.maxWidth;
@@ -110,20 +95,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                           child: CircleAvatar(
                             radius: 32,
                             backgroundColor: Colors.white,
-                            child: Icon(Icons.person_outline, color: cs.primary, size: 32),
+                            child: Icon(Icons.lock_outline, color: cs.primary, size: 32),
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Text(
-                        'Welcome to Sport Station Zone',
-                        style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
-                      ),
+                      Text('Welcome back', style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
                       const SizedBox(height: 6),
-                      Text(
-                        'Sign up to start shopping your favorite sports gear.',
-                        style: theme.textTheme.bodyMedium,
-                      ),
+                      Text('Sign in to continue your shopping.', style: theme.textTheme.bodyMedium),
                       const SizedBox(height: 20),
                       Card(
                         elevation: 2,
@@ -135,20 +114,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                             child: Column(
                               children: [
                                 TextFormField(
-                                  controller: _nameController,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Full Name',
-                                    prefixIcon: Icon(Icons.person_outline),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter your name';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                const SizedBox(height: 12),
-                                TextFormField(
                                   controller: _emailController,
                                   decoration: const InputDecoration(
                                     labelText: 'Email',
@@ -156,12 +121,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                                   ),
                                   keyboardType: TextInputType.emailAddress,
                                   validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter your email';
-                                    }
-                                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                                      return 'Please enter a valid email';
-                                    }
+                                    if (value == null || value.isEmpty) return 'Please enter your email';
+                                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) return 'Enter a valid email';
                                     return null;
                                   },
                                 ),
@@ -178,31 +139,44 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                                     ),
                                   ),
                                   validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter a password';
-                                    }
-                                    if (value.length < 6) {
-                                      return 'Password must be at least 6 characters';
-                                    }
+                                    if (value == null || value.isEmpty) return 'Please enter your password';
+                                    if (value.length < 6) return 'Password must be at least 6 characters';
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 16),
-                                Row(
-                                  children: [
-                                    Icon(Icons.verified_user, size: 18, color: theme.colorScheme.primary),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text('By continuing you agree to our Terms & Privacy Policy.', style: theme.textTheme.bodySmall),
-                                    ),
-                                  ],
+                                const SizedBox(height: 4),
+                                CheckboxListTile(
+                                  value: _rememberMe,
+                                  onChanged: (val) => setState(() => _rememberMe = val ?? true),
+                                  dense: true,
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                  contentPadding: EdgeInsets.zero,
+                                  title: const Text('Remember me'),
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 4),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    child: const Text('Forgot password?'),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
                                 SizedBox(
                                   width: double.infinity,
                                   height: 48,
                                   child: ElevatedButton.icon(
-                                    onPressed: _submitForm,
+                                    onPressed: _submit,
+                                    icon: const Icon(Icons.login),
+                                    label: const Text('Log in'),
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: OutlinedButton.icon(
+                                    onPressed: () => Navigator.pushNamed(context, '/register'),
                                     icon: const Icon(Icons.person_add_alt_1),
                                     label: const Text('Create account'),
                                   ),
@@ -216,7 +190,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                       Row(
                         children: [
                           Expanded(child: Divider(color: theme.dividerColor)),
-                          const SizedBox(width: 8),
+                        	const SizedBox(width: 8),
                           Text('or continue with', style: theme.textTheme.bodySmall),
                           const SizedBox(width: 8),
                           Expanded(child: Divider(color: theme.dividerColor)),
@@ -235,17 +209,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> with TickerProv
                             onPressed: () {},
                             icon: const FaIcon(FontAwesomeIcons.facebookF),
                             label: const Text('Facebook'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Already have an account?', style: theme.textTheme.bodyMedium),
-                          TextButton(
-                            onPressed: () => Navigator.pushNamed(context, '/login'),
-                            child: const Text('Log in'),
                           ),
                         ],
                       ),

@@ -20,6 +20,7 @@ class ModernAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       backgroundColor: AppTheme.background,
       elevation: 0,
+      automaticallyImplyLeading: false,
       leading: showBackButton
           ? IconButton(
               icon: Icon(

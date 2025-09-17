@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'registration_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -151,13 +150,8 @@ class ProfileScreen extends StatelessWidget {
                     icon: Icons.logout,
                     title: 'Logout',
                     onTap: () {
-                      // Handle logout
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const RegistrationScreen(),
-                        ),
-                      );
+                      // Navigate to login and clear history
+                      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
                     },
                   ),
                 ],

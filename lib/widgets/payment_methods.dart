@@ -105,7 +105,7 @@ class _MethodTile extends StatelessWidget {
     required this.name,
     required this.sub,
     required this.icon,
-    required this.color,
+    required this.color
   });
 
   @override
