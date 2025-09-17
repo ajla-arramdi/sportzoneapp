@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
 import '../widgets/top_search_bar.dart';
-import '../widgets/image_slider.dart';
-import '../widgets/timeline_product.dart';
-import '../widgets/payment_methods.dart';
-import '../widgets/clean_card_layout.dart';
+import '../widgets/modern_app_bar.dart';
+import '../widgets/hero_banner.dart';
+import '../widgets/category_chips.dart';
+import '../widgets/product_grid.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,32 +40,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sport Station Zone'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: SingleChildScrollView(
-        child: FadeTransition(
-          opacity: _animation,
-          child: Column(
-            children: const [
-              // 8px spacing
-              SizedBox(height: 8),
-              TopSearchBar(),
-              // 8px spacing
-              SizedBox(height: 8),
-              ImageSlider(),
-              // 8px spacing
-              SizedBox(height: 8),
-              TimelineProduct(),
-              // 8px spacing
-              SizedBox(height: 8),
-              PaymentMethods(),
-              // 8px spacing
-              SizedBox(height: 8),
-            ],
-          ),
-        ),
+      appBar: const ModernAppBar(title: 'Sport Station Zone'),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final double maxWidth = constraints.maxWidth >= 1200
+              ? 1100
+              : (constraints.maxWidth >= 900 ? 860 : constraints.maxWidth);
+          return Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxWidth),
+              child: SingleChildScrollView(
+                child: FadeTransition(
+                  opacity: _animation,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: const [
+                      SizedBox(height: 12),
+                      TopSearchBar(),
+                      SizedBox(height: 8),
+                      HeroBanner(),
+                      SizedBox(height: 8),
+                      CategoryChips(categories: ['All', 'Shoes', 'Apparel', 'Accessories', 'Football', 'Basketball', 'Running']),
+                      SizedBox(height: 8),
+                      ProductGrid(),
+                      SizedBox(height: 12),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'screens/main_screen.dart';
+import 'widgets/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,19 +16,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Sport Station Zone',
-      theme: ThemeData(
-        // Light theme
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
       darkTheme: ThemeData(
         // Dark theme
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
+          seedColor: AppTheme.primaryCyan,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
+        textTheme: GoogleFonts.openSansTextTheme(),
       ),
       home: const MainScreen(),
     );
