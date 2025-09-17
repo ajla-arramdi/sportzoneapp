@@ -102,7 +102,7 @@ class _HeaderCard extends StatelessWidget {
                     backgroundColor: Colors.white,
                     foregroundColor: cs.primary,
                   ),
-                  onPressed: () {},
+                  onPressed: () => Navigator.pushNamed(context, '/edit-profile'),
                   child: const Text('Edit'),
                 ),
               ],

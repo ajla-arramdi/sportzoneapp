@@ -5,6 +5,7 @@ import 'screens/main_screen.dart';
 import 'widgets/app_theme.dart';
 import 'screens/login_screen.dart';
 import 'screens/registration_screen.dart';
+import 'screens/edit_profile_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/': (_) => const MainScreen(),
         '/login': (_) => const LoginScreen(),
         '/register': (_) => const RegistrationScreen(),
+        '/edit-profile': (_) => const EditProfileScreen(),
       },
       initialRoute: '/login',
     );
