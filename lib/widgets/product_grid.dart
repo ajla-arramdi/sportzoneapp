@@ -26,10 +26,24 @@ class ProductGrid extends StatelessWidget {
           ),
           itemCount: 10,
           itemBuilder: (context, index) {
+            final String title = 'Sport Item ${index + 1}';
+            final String price = '\$${(index + 1) * 12}.99';
+            final Color color = Colors.primaries[index % Colors.primaries.length];
             return ProductCard(
-              title: 'Sport Item ${index + 1}',
+              title: title,
               subtitle: 'High-performance gear',
-              price: '\$${(index + 1) * 12}.99',
+              price: price,
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/product-detail',
+                  arguments: {
+                    'title': title,
+                    'price': price,
+                    'imageColor': color,
+                  },
+                );
+              },
             );
           },
         );
