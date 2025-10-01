@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'screens/main_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/welcome_screen.dart';
+import 'screens/intro_screen.dart';
 import 'widgets/app_theme.dart';
 import 'screens/login_screen.dart';
 import 'screens/registration_screen.dart';
@@ -36,7 +39,10 @@ class MyApp extends StatelessWidget {
           textTheme: GoogleFonts.openSansTextTheme(),
         ),
         routes: {
-          '/': (_) => const MainScreen(),
+          '/': (_) => const SplashScreen(),
+          '/welcome': (_) => const WelcomeScreen(),
+          '/intro': (_) => const IntroScreen(),
+          '/home': (_) => const MainScreen(),
           '/login': (_) => const LoginScreen(),
           '/register': (_) => const RegistrationScreen(),
           '/edit-profile': (_) => const EditProfileScreen(),
@@ -54,7 +60,7 @@ class MyApp extends StatelessWidget {
           }
           return null;
         },
-        initialRoute: '/login',
+        initialRoute: '/',
       ),
     );
   }

@@ -49,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Logged in')),
       );
-      Navigator.pushReplacementNamed(context, '/');
+      Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
